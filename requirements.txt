@@ -1,5 +1,5 @@
 flask-cors
-flash_sqlalchemy
+flask_sqlalchemy
 flask-sqlalchemy-erd
 openpyxl
 reportlab
