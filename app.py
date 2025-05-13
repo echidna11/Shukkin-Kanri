@@ -801,6 +801,9 @@ from flask import jsonify, session
 from datetime import date
 from models import Attendance, User
 
+from datetime import datetime
+import pytz
+
 @app.route('/api/user/attendance-status')
 def attendance_status():
     user_email = session.get('email')
@@ -814,34 +817,41 @@ def attendance_status():
     # Get the most recent attendance record
     record = (Attendance.query
               .filter_by(user_id=user.id)
-              .order_by(Attendance.date.desc(), Attendance.id.desc())  # Just in case
+              .order_by(Attendance.date.desc(), Attendance.id.desc())
               .first())
 
-    if record:
-        checkin_time = record.checkin_time
-        checkout_time = record.checkout_time
+    # Timezone setup
+    jst = pytz.timezone("Asia/Tokyo")
 
-        if not checkin_time or (checkin_time and checkout_time):
-            # No checkin yet or already checked out => allow checkin
+    def to_jst(dt):
+        if dt is None:
+            return None
+        # Ensure UTC awareness
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=pytz.utc)
+        return dt.astimezone(jst).isoformat()
+
+    if record:
+        checkin_time = to_jst(record.checkin_time)
+        checkout_time = to_jst(record.checkout_time)
+
+        if not record.checkin_time or (record.checkin_time and record.checkout_time):
             return jsonify({
                 'success': True,
-                'checkin_time': checkin_time.isoformat() if checkin_time else None,
-                'checkout_time': checkout_time.isoformat() if checkout_time else None,
+                'checkin_time': checkin_time,
+                'checkout_time': checkout_time,
                 'enable_checkin': True,
                 'enable_checkout': False
             })
-
         else:
-            # Checkin exists, but checkout not done => allow checkout
             return jsonify({
                 'success': True,
-                'checkin_time': checkin_time.isoformat(),
+                'checkin_time': checkin_time,
                 'checkout_time': None,
                 'enable_checkin': False,
                 'enable_checkout': True
             })
 
-    # No record at all => allow checkin
     return jsonify({
         'success': True,
         'checkin_time': None,

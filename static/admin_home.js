@@ -35,8 +35,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         .then(res => res.json())
                         .then(data => {
                             scannerStatus.textContent = data.success
-                                ? 'Check-in successful!'
-                                : 'Check-in failed: ' + (data.message || 'Invalid QR');
+                                ? 'QRコードのスキャンに成功しました'
+                                : 'QRコードのスキャンに失敗しました: ' + (data.message || '無効なQRコードです');
 
                             setTimeout(() => {
                                 scannerModal.style.display = 'none';

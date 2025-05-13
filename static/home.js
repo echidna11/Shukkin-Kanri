@@ -1,7 +1,7 @@
 function getCurrentLocation() {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
-      reject("Geolocation not supported.");
+      reject("位置情報の取得はサポートされていません。");
     } else {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -11,7 +11,7 @@ function getCurrentLocation() {
           });
         },
         (error) => {
-          reject("Error getting location.");
+          reject("位置情報の取得中にエラーが発生しました。");
         },
         { timeout: 10000 }
       );
@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
   
       const verifyData = await verifyRes.json();
       if (!verifyData.allowed) {
-        alert("You're not within your assigned office location.");
+        alert("現在地が正しい勤務地ではありません。");
         return;
       }
   
@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         }, 2000);
       } else {
-        alert("Failed to generate QR.");
+        alert("QRコードの生成に失敗しました。");
       }
   
     } catch (err) {
@@ -181,7 +181,7 @@ function fetchAttendanceStatus() {
       }
     })
     .catch(err => {
-      console.error("Failed to fetch attendance status:", err);
+      console.error("出勤状況の取得に失敗しました：", err);
     });
 }
 
