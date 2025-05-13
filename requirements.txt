@@ -4,7 +4,9 @@ flask-sqlalchemy-erd
 openpyxl
 reportlab
 weasyprint
-python-dotenv sqlalchemy psycopg2
+python-dotenv 
+sqlalchemy 
+psycopg2
 geopy
 webauthn
 fido2
