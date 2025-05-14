@@ -88,14 +88,24 @@ def login():
     # Check if user exists in DB
     user = User.query.filter_by(email=email).first()
     if not user:
+        office_id = None
+
+        if is_guest:
+            from models import Office
+            latest_office = Office.query.order_by(Office.created_at.asc()).first()
+            if latest_office:
+                office_id = latest_office.id
+
         user = User(
             email=email,
-            password_hash="placeholder_hashed_pw" if not is_guest else "guest",
+            password_hash="guest" if is_guest else "placeholder_hashed_pw",
             role="employee",
-            name="Guest" if is_guest else "Unknown"
+            name="Guest" if is_guest else "Unknown",
+            office_id=office_id  # ✅ Assign the latest office
         )
         db.session.add(user)
         db.session.commit()
+
 
     # Generate and send OTP
     otp = send_otp('diksha@morabu.com', 'uzqgy48b', email)
