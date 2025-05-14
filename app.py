@@ -92,7 +92,7 @@ def login():
 
         if is_guest:
             from models import Office
-            latest_office = Office.query.order_by(Office.created_at.asc()).first()
+            latest_office = Office.query.order_by(Office.id.desc()).first()
             if latest_office:
                 office_id = latest_office.id
 
